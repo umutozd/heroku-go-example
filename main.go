@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/sirupsen/logrus"
 )
@@ -13,7 +14,7 @@ func main() {
 	mux.HandleFunc("/api/hello", handleHello)
 	mux.HandleFunc("/", handleIndex)
 
-	if err := http.ListenAndServe(":8080", mux); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), mux); err != nil {
 		logrus.WithError(err).Fatalf("ListenAndServe returned error")
 	}
 }
