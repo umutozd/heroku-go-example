@@ -3,8 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -13,7 +14,7 @@ func main() {
 	mux.HandleFunc("/", handleIndex)
 
 	if err := http.ListenAndServe(":8080", mux); err != nil {
-		log.Fatalf("ListenAndServe returned error: %v", err)
+		logrus.WithError(err).Fatalf("ListenAndServe returned error")
 	}
 }
 
@@ -33,7 +34,7 @@ const indexPageHtml = `
 `
 
 func handleIndex(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte(indexPageHtml))
+	_, _ = w.Write([]byte(indexPageHtml))
 }
 
 func handleHello(w http.ResponseWriter, r *http.Request) {
@@ -45,9 +46,9 @@ func handleHello(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Printf("error marshaling api response: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(`{"error": "unable to write api response"}`))
+		_, _ = w.Write([]byte(`{"error": "unable to write api response"}`))
 	} else {
 		w.WriteHeader(http.StatusOK)
-		w.Write(b)
+		_, _ = w.Write(b)
 	}
 }
